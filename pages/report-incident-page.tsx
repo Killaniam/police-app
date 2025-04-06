@@ -5,25 +5,31 @@ import { data } from '@/app/api/data/dummy-data';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ReportIncidentPage: React.FC = () => {
+  // Initialize router instance for navigation
   const router = useRouter();
 
-  // Function to handle navigation
+  // Function that stores the selected incident title and navigates to the form page
   const handleNavigation = async (title: string) => {
     await AsyncStorage.setItem('title', title);
     router.replace('/report-incident-form' as RelativePathString);
   };
 
   return (
+    // Main container view that holds the grid layout of incident cards
     <View style={styles.container}>
-      {/* Container for the grid layout */}
+      {/* Maps through incident data to create a grid of touchable cards */}
       {data?.map((item, index) => (
+        // Touchable wrapper for each incident card with reduced opacity on press
         <TouchableOpacity
           activeOpacity={0.7}
           key={index}
           onPress={() => handleNavigation(item.title)}
         >
+          {/* Individual card container for each incident type */}
           <View key={index} style={styles.card}>
+            {/* Icon representing the incident type */}
             <Image source={item.icon} style={styles.icon} />
+            {/* Title text for the incident type */}
             <Text style={styles.title}>{item.title}</Text>
           </View>
         </TouchableOpacity>
@@ -35,6 +41,7 @@ const ReportIncidentPage: React.FC = () => {
 export default ReportIncidentPage;
 
 const styles = StyleSheet.create({
+  // Container style for the main grid layout with flex properties and padding
   container: {
     height: '100%',
     flexDirection: 'row',
@@ -44,6 +51,7 @@ const styles = StyleSheet.create({
     paddingVertical: 40,
     paddingHorizontal: 10,
   },
+  // Style for individual incident cards with border and dimensions
   card: {
     width: 110,
     height: 130,
@@ -54,11 +62,13 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 22,
   },
+  // Style for the incident type icons with specific dimensions
   icon: {
     width: 80,
     height: 70,
     resizeMode: 'contain',
   },
+  // Style for the incident type title text
   title: {
     textAlign: 'center',
     marginTop: 10,

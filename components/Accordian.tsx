@@ -2,14 +2,17 @@ import { AntDesign } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, LayoutAnimation } from 'react-native';
 
+// Interface defining props for AccordionItem component with title and children
 interface AccordionItemProps {
   title: string;
   children: React.ReactNode;
 }
 
 const AccordionItem: React.FC<AccordionItemProps> = ({ title, children }) => {
+  // State to track if accordion section is expanded or collapsed
   const [isOpen, setIsOpen] = useState(false);
 
+  // Function to toggle accordion open/close state with animation
   const toggleAccordion = () => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setIsOpen(!isOpen);

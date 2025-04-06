@@ -13,11 +13,13 @@ type ReportIncidentFormPageTypes = {
 };
 
 const ReportIncidentFormPage: React.FC<ReportIncidentFormPageTypes> = ({ title }) => {
+  // State variables for managing image upload and loading state
   const [imageBase64, setImageBase64] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<string>('');
   const [uploadedFile, setUploadedFile] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
+  // State object for managing form input values
   const [form, setForm] = useState({
     suspects: '',
     suspectsDetails: '',
@@ -25,12 +27,14 @@ const ReportIncidentFormPage: React.FC<ReportIncidentFormPageTypes> = ({ title }
     time: '',
   });
 
+  // API base URL from environment variables
   const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
 
+  // Initialize Firebase services
   const db = getFirestore();
   const auth = FIREBASE_AUTH;
 
-  // Get user document
+  // Function to retrieve user document from Firestore database
   const getUserDoc = async (userId: string) => {
     try {
       const userDocRef = doc(db, 'users', userId);
@@ -49,7 +53,7 @@ const ReportIncidentFormPage: React.FC<ReportIncidentFormPageTypes> = ({ title }
     }
   };
 
-  // Get username
+  // Function to get current user's username
   const getUsername = async () => {
     const username = await getUserDoc(auth!.currentUser!.uid);
     if (username) {
@@ -59,7 +63,7 @@ const ReportIncidentFormPage: React.FC<ReportIncidentFormPageTypes> = ({ title }
     }
   };
 
-  // Get current location
+  // Function to get user's current location and address
   const getCurrentLocation = async () => {
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
@@ -85,7 +89,7 @@ const ReportIncidentFormPage: React.FC<ReportIncidentFormPageTypes> = ({ title }
     }
   };
 
-  // Handle form submission
+  // Function to handle form submission and create incident report
   const handlePress = async () => {
     try {
       setLoading(true);
@@ -115,7 +119,7 @@ const ReportIncidentFormPage: React.FC<ReportIncidentFormPageTypes> = ({ title }
       );
 
       if (response.status === 200) {
-        // Reset form on successful submission
+        // Reset form state after successful submission
         setForm({
           suspects: '',
           suspectsDetails: '',
@@ -137,9 +141,11 @@ const ReportIncidentFormPage: React.FC<ReportIncidentFormPageTypes> = ({ title }
   };
 
   return (
+    // ScrollView container with styling for the form
     <ScrollView
       style={{ flex: 1, backgroundColor: '#FBFBFB', paddingHorizontal: 20, paddingVertical: 30 }}
     >
+      {/* Form field for suspect names */}
       <FormField
         label="Name of suspect(s)"
         value={form.suspects}
@@ -147,6 +153,7 @@ const ReportIncidentFormPage: React.FC<ReportIncidentFormPageTypes> = ({ title }
         handleChangeText={(text) => setForm({ ...form, suspects: text })}
         tooltip="Enter the full name(s) of the person(s) involved in the incident"
       />
+      {/* Form field for suspect details */}
       <FormField
         isRequired
         label="Details of the suspect(s)"
@@ -155,6 +162,7 @@ const ReportIncidentFormPage: React.FC<ReportIncidentFormPageTypes> = ({ title }
         handleChangeText={(text) => setForm({ ...form, suspectsDetails: text })}
         tooltip="Provide physical description, clothing, or any distinguishing characteristics"
       />
+      {/* Form field for incident details */}
       <FormField
         isRequired
         label="Details of the incident"
@@ -163,6 +171,7 @@ const ReportIncidentFormPage: React.FC<ReportIncidentFormPageTypes> = ({ title }
         handleChangeText={(text) => setForm({ ...form, incidentDetails: text })}
         tooltip="Describe what happened, where it occurred, and any relevant context"
       />
+      {/* Form field for incident time */}
       <FormField
         isRequired
         label="Time"
@@ -171,6 +180,7 @@ const ReportIncidentFormPage: React.FC<ReportIncidentFormPageTypes> = ({ title }
         handleChangeText={(text) => setForm({ ...form, time: text })}
         tooltip="Specify when the incident occurred (e.g., 3:30 PM on July 1, 2023)"
       />
+      {/* Component for file upload functionality */}
       <FileDropdown
         label="Upload Documents"
         setImageBase64={setImageBase64}
@@ -180,9 +190,11 @@ const ReportIncidentFormPage: React.FC<ReportIncidentFormPageTypes> = ({ title }
         setUploadedFile={setUploadedFile}
         tooltip="Upload any relevant photos or documents related to the incident"
       />
+      {/* Display image size limit warning */}
       <View>
         <Text>Please ensure that the image size is below 100KB.</Text>
       </View>
+      {/* Submit button for the form */}
       <PrimaryButton disabled={loading} label="Report" handlePress={handlePress} />
     </ScrollView>
   );
